@@ -1,0 +1,304 @@
+
+run:
+
+  timeout: 5m
+  issues-exit-code: 1
+  tests: true
+  build-tags:
+    - integration
+    - debugging
+
+  modules-download-mode: readonly
+
+  allow-parallel-runners: false
+
+output:
+  # colored-line-number|line-number|json|tab|checkstyle|code-climate, default is "colored-line-number"
+  formats:
+    - format: colored-line-number
+
+  # print lines of code with issue, default is true
+  print-issued-lines: true
+
+  # print linter name in the end of issue text, default is true
+  print-linter-name: true
+
+  # make issues output unique by line, default is true
+  uniq-by-line: true
+
+  # add a prefix to the output file references; default is no prefix
+  path-prefix: ""
+
+
+# all available settings of specific linters
+linters-settings:
+  dogsled:
+    # checks assignments with too many blank identifiers; default is 2
+    max-blank-identifiers: 2
+  
+  errcheck:
+    # default is false: such cases aren't reported by default.
+    check-type-assertions: false
+    # default is false: such cases aren't reported by default.
+    check-blank: false
+
+    exclude-functions:
+      - fmt
+      - io/ioutil(Read)
+
+  exhaustive:
+    # indicates that switch statements are to be considered exhaustive if a
+    # 'default' case is present, even if all enum members aren't listed in the
+    # switch
+    default-signifies-exhaustive: false
+  funlen:
+    lines: 240
+    statements: 90
+  gci:
+    # put imports beginning with prefix after 3rd-party packages;
+    # only support one prefix
+    # if not set, use goimports.local-prefixes
+    sections:
+      - prefix(go.kl/osmp)
+  gocognit:
+    # minimal code complexity to report, 30 by default (but we recommend 10-20)
+    min-complexity: 20
+  nestif:
+    # minimal complexity of if statements to report, 5 by default
+    min-complexity: 7
+  goconst:
+    # minimal length of string constant, 3 by default
+    min-len: 3
+    # minimal occurrences count to trigger, 3 by default
+    min-occurrences: 3
+    ignore-tests: true
+  gocritic:
+
+    # Enable multiple checks by tags, run `GL_DEBUG=gocritic golangci-lint run` to see all tags and checks.
+    # Empty list by default. See https://github.com/go-critic/go-critic#usage -> section "Tags".
+    enabled-tags:
+      - performance
+    disabled-tags:
+      - experimental
+
+    settings: # settings passed to gocritic
+      captLocal: # must be valid enabled check name
+        paramsOnly: true
+      # rangeValCopy:
+      #   sizeThreshold: 32
+  gocyclo:
+    # minimal code complexity to report, 30 by default (but we recommend 10-20)
+    min-complexity: 40
+  godot:
+    # check all top-level comments, not only declarations
+    check-all: false
+
+  govet:
+    # settings per analyzer
+    settings:
+      printf: # analyzer name, run `go tool vet help` to see all analyzers
+        funcs: # run `go tool vet help printf` to see available settings for `printf` analyzer
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+
+    # enable or disable analyzers by name
+    enable:
+      - atomicalign
+      - shadow
+    enable-all: false
+    disable:
+      - shadow
+    disable-all: false
+  gomodguard:
+
+    blocked:
+      # List of blocked modules.
+      # Default: []
+      modules:
+        - go.temporal.io/api:
+            reason: "AP SDK internal details"
+        - go.temporal.io/sdk:
+            reason: "AP SDK internal details"
+
+      # Set to true to raise lint issues for packages that are loaded from a local path via replace directive.
+      # Default: false
+      local_replace_directives: false
+  lll:
+    # max line length, lines longer will be reported. Default is 120.
+    # '\t' is counted as 1 character by default, and can be changed with the tab-width option
+    line-length: 120
+    # tab width in spaces. Default to 1.
+    tab-width: 1
+  # maligned:
+    # print struct with more effective memory layout or not, false by default
+    # suggest-new: true
+  misspell:
+    # Correct spellings using locale preferences for US or UK.
+    # Default is to use a neutral variety of English.
+    # Setting locale to US will correct the British spelling of 'colour' to 'color'.
+    locale: US
+    ignore-words:
+      - someword
+  nakedret:
+    # make an issue if func has more lines of code than this setting and it has naked returns; default is 30
+    max-func-lines: 30
+  prealloc:
+    # XXX: we don't recommend using this linter before doing performance profiling.
+    # For most programs usage of prealloc will be a premature optimization.
+
+    # Report preallocation suggestions only on simple loops that have no returns/breaks/continues/gotos in them.
+    # True by default.
+    simple: true
+    range-loops: true # Report preallocation suggestions on range loops, true by default
+    for-loops: false # Report preallocation suggestions on for loops, false by default
+  nolintlint:
+    # Enable to ensure that nolint directives are all used. Default is true.
+    allow-unused: false
+    # Disable to ensure that nolint directives don't have a leading space. Default is true.
+    # allow-leading-space: true
+    # Exclude following linters from requiring an explanation.  Default is [].
+    allow-no-explanation: []
+    # Enable to require an explanation of nonzero length after each nolint directive. Default is false.
+    require-explanation: true
+    # Enable to require nolint directives to mention the specific linter being suppressed. Default is false.
+    require-specific: true
+  rowserrcheck:
+    packages:
+      - github.com/jmoiron/sqlx
+  testpackage:
+    # regexp pattern to skip files
+    skip-regexp: (export|internal)_test\.go
+  unparam:
+    # Inspect exported functions, default is false. Set to true if no external program/library imports your code.
+    # XXX: if you enable this setting, unparam will report a lot of false-positives in text editors:
+    # if it's called for subdir of a project it can't find external interfaces. All text editor integrations
+    # with golangci-lint call it on a directory with the changed file.
+    check-exported: false
+  # unused:
+    # treat code as a program (not a library) and report unused exported identifiers; default is false.
+    # XXX: if you enable this setting, unused will report a lot of false-positives in text editors:
+    # if it's called for subdir of a project it can't find funcs usages. All text editor integrations
+    # with golangci-lint call it on a directory with the changed file.
+    # check-exported: false
+  whitespace:
+    multi-if: false   # Enforces newlines (or comments) after every multi-line if statement
+    multi-func: false # Enforces newlines (or comments) after every multi-line function signature
+  wsl:
+    # If true append is only allowed to be cuddled if appending value is
+    # matching variables, fields or types on line above. Default is true.
+    strict-append: true
+    # Allow calls and assignments to be cuddled as long as the lines have any
+    # matching variables, fields or types. Default is true.
+    allow-assign-and-call: true
+    # Allow multiline assignments to be cuddled. Default is true.
+    allow-multiline-assign: true
+    # Allow declarations (var) to be cuddled.
+    allow-cuddle-declarations: false
+    # Allow trailing comments in ending of blocks
+    allow-trailing-comment: false
+    # Force newlines in end of case at this limit (0 = never).
+    force-case-trailing-whitespace: 0
+    # Force cuddling of errs checks with errs var assignment
+    force-err-cuddling: false
+    # Allow leading comments to be separated with empty liens
+    allow-separated-leading-comment: false
+  gofumpt:
+    # Choose whether or not to use the extra rules that are disabled
+    # by default
+    extra-rules: false
+
+  # The custom section can be used to define linter plugins to be loaded at runtime. See README doc
+  #  for more info.
+  # custom:
+  #   # Each custom linter should have a unique name.
+  #    example:
+  #     # The path to the plugin *.so. Can be absolute or local. Required for each custom linter
+  #     path: /path/to/example.so
+  #     # The description of the linter. Optional, just for documentation purposes.
+  #     description: This is an example usage of a plugin linter.
+  #     # Intended to point to the repo location of the linter. Optional, just for documentation purposes.
+  #     original-url: github.com/golangci/example-linter
+  revive:
+    # see https://github.com/mgechev/revive#available-rules for details.
+    ignore-generated-header: true
+    severity: warning
+    rules:
+      - name: indent-error-flow
+        severity: warning
+      - name: blank-imports
+      - name: context-as-argument
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: superfluous-else
+      - name: unreachable-code
+
+
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    - dogsled
+    - durationcheck
+    - err113
+    - errcheck
+    - errorlint
+    - exhaustive
+    - forcetypeassert
+    - funlen
+    - gochecknoglobals
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - godox
+    - goheader
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - importas
+    - ineffassign
+    - makezero
+    - misspell
+    - nakedret
+    - nestif
+    - nilerr
+    - noctx
+    - nolintlint
+    - paralleltest
+    - predeclared
+    - promlinter
+    - staticcheck
+    - testpackage
+    - thelper
+    - tparallel
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+  fast: false
+
+issues:
+  exclude-rules:
+    - path: "internal/cases/service_test.go"
+      linters:
+        - funlen
+        - gochecknoglobals
+        - tparallel
+    - path: "logger/logger.go"
+      linters:
+        - gochecknoglobals
+    
+        

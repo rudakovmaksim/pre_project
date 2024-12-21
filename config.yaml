@@ -1,0 +1,14 @@
+default:
+  service:
+    actual_titles:
+      - "BTC"
+      - "ETH"
+  client:
+    url: https://min-api.cryptocompare.com/data/pricemultifull
+    key: 6c7d951549284eacfa63a5c338bba2f2ea30b7033d31e15e3d83c1350959144b
+    exchange_rates: USD
+  database:
+    connect_string: postgres://user:password@db:5432/mydatabase?sslmode=disable
+  server:
+    address: :8080
+    

@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: postgres_container
+    ports:
+      - "9020:5432"
+    environment:
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+     - ./deployment/migrations/postgres:/docker-entrypoint-initdb.d
+
+  app:
+    build: .
+    container_name: pre_project
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+

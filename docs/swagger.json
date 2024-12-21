@@ -1,0 +1,142 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API server for information crypto coins",
+        "title": "Swagger Pre project API",
+        "contact": {},
+        "version": "1.16"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/rates/last": {
+            "get": {
+                "description": "Получить последние курсы криптовалют по указанным названиям.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rates"
+                ],
+                "summary": "Get Last Rates",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Список названий криптовалют через запятую (например, BTC,ETH)",
+                        "name": "titles",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список последних курсов криптовалют",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/port.coinDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - отсутствует параметр titles",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found - данные не найдены",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - ошибка на сервере",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/rates/{typeinfo}": {
+            "get": {
+                "description": "Получить агрегированные данные курсов криптовалют (максимум, минимум, среднее, процентное изменение).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rates"
+                ],
+                "summary": "Get Average Rates",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Тип агрегации (max, min, avg, percent)",
+                        "name": "typeinfo",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Список названий криптовалют через запятую (например, BTC,ETH)",
+                        "name": "titles",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список агрегированных данных курсов криптовалют",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/port.coinDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - отсутствует параметр titles или typeinfo",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found - данные не найдены",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - ошибка на сервере",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "port.coinDTO": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "type": "number"
+                },
+                "rate_percent_delta": {
+                    "type": "number"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,95 @@
+basePath: /
+definitions:
+  port.coinDTO:
+    properties:
+      cost:
+        type: number
+      rate_percent_delta:
+        type: number
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API server for information crypto coins
+  title: Swagger Pre project API
+  version: "1.16"
+paths:
+  /rates/{typeinfo}:
+    get:
+      consumes:
+      - application/json
+      description: Получить агрегированные данные курсов криптовалют (максимум, минимум,
+        среднее, процентное изменение).
+      parameters:
+      - description: Тип агрегации (max, min, avg, percent)
+        in: path
+        name: typeinfo
+        required: true
+        type: string
+      - description: Список названий криптовалют через запятую (например, BTC,ETH)
+        in: query
+        name: titles
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список агрегированных данных курсов криптовалют
+          schema:
+            items:
+              $ref: '#/definitions/port.coinDTO'
+            type: array
+        "400":
+          description: Bad Request - отсутствует параметр titles или typeinfo
+          schema:
+            type: string
+        "404":
+          description: Not Found - данные не найдены
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error - ошибка на сервере
+          schema:
+            type: string
+      summary: Get Average Rates
+      tags:
+      - Rates
+  /rates/last:
+    get:
+      consumes:
+      - application/json
+      description: Получить последние курсы криптовалют по указанным названиям.
+      parameters:
+      - description: Список названий криптовалют через запятую (например, BTC,ETH)
+        in: query
+        name: titles
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список последних курсов криптовалют
+          schema:
+            items:
+              $ref: '#/definitions/port.coinDTO'
+            type: array
+        "400":
+          description: Bad Request - отсутствует параметр titles
+          schema:
+            type: string
+        "404":
+          description: Not Found - данные не найдены
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error - ошибка на сервере
+          schema:
+            type: string
+      summary: Get Last Rates
+      tags:
+      - Rates
+swagger: "2.0"
